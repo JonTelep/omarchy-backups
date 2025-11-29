@@ -1,0 +1,61 @@
+# Omarchy Config Backup .gitignore
+# Prevent sensitive data and build artifacts from being committed
+
+# ============================================
+# SENSITIVE FILES
+# ============================================
+
+# Keys and credentials
+**/*password*
+**/*secret*
+**/*credentials*
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+
+# ============================================
+# CACHE DIRECTORIES
+# ============================================
+
+config/**/cache/
+config/**/Cache/
+config/**/__pycache__/
+
+# ============================================
+# BUILD ARTIFACTS AND DEPENDENCIES
+# ============================================
+
+# Node.js
+config/**/node_modules/
+
+# Rust
+config/**/target/
+
+# Python
+config/**/__pycache__/
+config/**/.venv/
+config/**/venv/
+
+# ============================================
+# LOGS AND TEMPORARY FILES
+# ============================================
+
+config/**/*.log
+config/**/*.tmp
+config/**/*.swp
+config/**/*.swo
+config/**/*~
+
+# ============================================
+# GIT REPOSITORIES
+# ============================================
+
+config/**/.git/
+
+# ============================================
+# BACKUP SCRIPT TEMPORARY FILES
+# ============================================
+
+.backup-in-progress
+*.backup-*
