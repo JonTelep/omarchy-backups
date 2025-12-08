@@ -34,11 +34,14 @@ CONFIG_SOURCE="${HOME}/.config"
 CONFIG_DEST="${BACKUP_ROOT}/config"
 SCRIPTS_SOURCE="${HOME}/Projects"
 SCRIPTS_DEST="${BACKUP_ROOT}"
+HOME_SOURCE="${HOME}"
+HOME_DEST="${BACKUP_ROOT}/home"
 
 # Counters for summary
 TOTAL_DIRS_COPIED=0
 TOTAL_FILES_COPIED=0
 TOTAL_SCRIPT_DIRS_COPIED=0
+TOTAL_HOME_FILES_COPIED=0
 
 # ============================================
 # HELPER FUNCTIONS
@@ -264,6 +267,47 @@ backup_script_dirs() {
 }
 
 # ============================================
+# BACKUP HOME FILES
+# ============================================
+
+backup_home_files() {
+    print_header "Backing up ~/ files"
+
+    local copied=0
+    local skipped=0
+
+    for home_file in "${HOME_FILES[@]}"; do
+        local source_path="${HOME_SOURCE}/${home_file}"
+        local dest_path="${HOME_DEST}/${home_file}"
+
+        if [[ ! -e "${source_path}" ]]; then
+            print_verbose "Skipped (not found): ${home_file}"
+            skipped=$((skipped + 1))
+            continue
+        fi
+
+        if [[ "${DRY_RUN}" == "true" ]]; then
+            # List the file that will be backed up
+            echo ""
+            echo "  File: ${home_file}"
+            echo "    - ${home_file}"
+            copied=$((copied + 1))
+        else
+            # Create destination directory if needed
+            mkdir -p "${HOME_DEST}"
+
+            # Use rsync to copy the file
+            rsync -a "${source_path}" "${dest_path}"
+            print_verbose "Copied: ${home_file}"
+            TOTAL_HOME_FILES_COPIED=$((TOTAL_HOME_FILES_COPIED + 1))
+            copied=$((copied + 1))
+        fi
+    done
+
+    print_info "Home files: ${copied} copied, ${skipped} skipped"
+}
+
+# ============================================
 # RESTORE CONFIG DIRECTORIES
 # ============================================
 
@@ -389,6 +433,43 @@ restore_script_dirs() {
 }
 
 # ============================================
+# RESTORE HOME FILES
+# ============================================
+
+restore_home_files() {
+    print_header "Restoring ~/ files"
+
+    local restored=0
+    local skipped=0
+
+    for home_file in "${HOME_FILES[@]}"; do
+        local source_path="${HOME_DEST}/${home_file}"
+        local dest_path="${HOME_SOURCE}/${home_file}"
+
+        if [[ ! -e "${source_path}" ]]; then
+            print_verbose "Skipped (not in backup): ${home_file}"
+            skipped=$((skipped + 1))
+            continue
+        fi
+
+        if [[ "${DRY_RUN}" == "true" ]]; then
+            echo ""
+            echo "  File: ${home_file}"
+            echo "    - ${home_file}"
+            restored=$((restored + 1))
+        else
+            # Use rsync to restore the file
+            rsync -a "${source_path}" "${dest_path}"
+            print_verbose "Restored: ${home_file}"
+            TOTAL_HOME_FILES_COPIED=$((TOTAL_HOME_FILES_COPIED + 1))
+            restored=$((restored + 1))
+        fi
+    done
+
+    print_info "Home files: ${restored} restored, ${skipped} skipped"
+}
+
+# ============================================
 # SUMMARY
 # ============================================
 
@@ -405,6 +486,7 @@ show_summary() {
     echo "  Config directories backed up: ${TOTAL_DIRS_COPIED}"
     echo "  Config files backed up: ${TOTAL_FILES_COPIED}"
     echo "  Script directories backed up: ${TOTAL_SCRIPT_DIRS_COPIED}"
+    echo "  Home files backed up: ${TOTAL_HOME_FILES_COPIED}"
     echo "  Backup location: ${BACKUP_ROOT}"
     echo ""
 
@@ -438,6 +520,7 @@ show_restore_summary() {
     echo "  Config directories restored: ${TOTAL_DIRS_COPIED}"
     echo "  Config files restored: ${TOTAL_FILES_COPIED}"
     echo "  Script directories restored: ${TOTAL_SCRIPT_DIRS_COPIED}"
+    echo "  Home files restored: ${TOTAL_HOME_FILES_COPIED}"
     echo "  Restored from: ${BACKUP_ROOT}"
     echo ""
 }
@@ -545,6 +628,7 @@ main() {
         restore_config_dirs
         restore_config_files
         restore_script_dirs
+        restore_home_files
         show_restore_summary
 
         # Exit successfully
@@ -559,6 +643,7 @@ main() {
         backup_config_dirs
         backup_config_files
         backup_script_dirs
+        backup_home_files
         show_summary
 
         # Exit successfully

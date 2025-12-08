@@ -29,6 +29,14 @@ SCRIPT_DIRS=(
 )
 
 # ============================================
+# HOME FILES (individual files from ~/)
+# ============================================
+
+HOME_FILES=(
+    ".bashrc"
+)
+
+# ============================================
 # BACKUP OPTIONS
 # ============================================
 
@@ -46,3 +54,5 @@ QUIET=false                # Set via --quiet flag
 #   CONFIG_DEST      - Destination: ${BACKUP_ROOT}/config
 #   SCRIPTS_SOURCE   - Source: ${HOME}/Projects
 #   SCRIPTS_DEST     - Destination: ${BACKUP_ROOT}
+#   HOME_SOURCE      - Source: ${HOME}
+#   HOME_DEST        - Destination: ${BACKUP_ROOT}/home
