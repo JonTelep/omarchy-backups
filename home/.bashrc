@@ -18,4 +18,6 @@ alias ...='cd ../..'
 alias ll='ls -alF'
 
 # SSH
-alias sss='eval "$(ssh-agent -s)"'
+alias sss='echo "Executing SSH agent..." && eval "$(ssh-agent -s)"'
+alias ssa='echo "Adding SSH key..." && ssh-add ~/.ssh/github'
+alias sst='echo "Testing SSH connection..." && ssh -T git@github.com'

@@ -9,6 +9,7 @@
     "hyprland/workspaces"
   ],
   "modules-center": [
+    "clock",
     "custom/update",
     "custom/screenrecording-indicator"
   ],
@@ -18,8 +19,7 @@
     "network",
     "pulseaudio",
     "cpu",
-    "battery",
-    "clock"
+    "battery"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
